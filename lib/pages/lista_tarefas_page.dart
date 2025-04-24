@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciador_tarefas_si7/dao/tarefa_dao.dart';
 import 'package:gerenciador_tarefas_si7/model/tarefa.dart';
@@ -20,6 +21,7 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
 
   final tarefas = <Tarefa> [];
   final _dao = TarefaDao();
+  var _carregando = false;
 
   @override
   void initState(){
@@ -28,6 +30,10 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
   }
 
   void _atualizarLista() async{
+    setState(() {
+      _carregando = true;
+    });
+
     final prefs = await SharedPreferences.getInstance();
     final campoOrdenacao = prefs.getString(FiltroPage.CHAVE_CAMPO_ORDENACAO) ?? Tarefa.CAMPO_ID;
     final usarOrdemDecrescente = prefs.getBool(FiltroPage.CHAVE_ORDENAR_DECRESCENTE) == true;
@@ -43,6 +49,9 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
       if(buscarTarefa.isNotEmpty){
         tarefas.addAll(buscarTarefa);
       }
+    });
+    setState(() {
+      _carregando = false;
     });
   }
 
@@ -74,6 +83,31 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
   }
 
   Widget _criarBody() {
+    if (_carregando){
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Align(
+            alignment: AlignmentDirectional.center,
+            child: CircularProgressIndicator(),
+          ),
+          Align(
+            alignment: AlignmentDirectional.center,
+            child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'Carregando as suas tarefas!',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+          )
+        ],
+      );
+    }
     if (tarefas.isEmpty){
       return const Center(
         child: Text('Nenhuma tarefa cadastrada',
