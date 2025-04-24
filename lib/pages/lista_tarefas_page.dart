@@ -121,10 +121,32 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
           final tarefa = tarefas[index];
           return PopupMenuButton<String>(
               child: ListTile(
-                title: Text('${tarefa.id} - ${tarefa.descricao}'),
-                subtitle: Text(tarefa.prazoFormatado.isNotEmpty ?
-                'Prazo - ${tarefa.prazoFormatado}' :
-                'Prazo - não cadastrado'),
+                leading: Checkbox(
+                  value: tarefa.finalizada,
+                  onChanged: (bool? checkd){
+                    setState(() {
+                      tarefa.finalizada = checkd == true;
+                    });
+                    _dao.salvar(tarefa);
+                  },
+                ),
+                title: Text(
+                    '${tarefa.id} - ${tarefa.descricao}',
+                  style: TextStyle(
+                    decoration:
+                      tarefa.finalizada ? TextDecoration.lineThrough : null,
+                      color: tarefa.finalizada ? Colors.grey : null,
+                  ),
+                ),
+                subtitle: Text(
+                    tarefa.prazoFormatado.isNotEmpty ?
+                'Prazo - ${tarefa.prazoFormatado}' : 'Prazo - não cadastrado',
+                  style: TextStyle(
+                    decoration:
+                    tarefa.finalizada ? TextDecoration.lineThrough : null,
+                    color: tarefa.finalizada ? Colors.grey : null,
+                  ),
+                ),
               ),
             itemBuilder: (BuildContext context) => criarMenuPopUp(),
             onSelected: (String valorSelecionado){
