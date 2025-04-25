@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciador_tarefas_si7/dao/tarefa_dao.dart';
 import 'package:gerenciador_tarefas_si7/model/tarefa.dart';
+import 'package:gerenciador_tarefas_si7/pages/detalhes_tarefa_page.dart';
 import 'package:gerenciador_tarefas_si7/pages/filtro_page.dart';
 import 'package:gerenciador_tarefas_si7/widgets/conteudo_form_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,7 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
 
   static const ACAO_EDITAR = 'editar';
   static const ACAO_EXCLUIR = 'excluir';
+  static const ACAO_VISUALIZAR = 'visualizar';
 
   final tarefas = <Tarefa> [];
   final _dao = TarefaDao();
@@ -152,8 +154,11 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
             onSelected: (String valorSelecionado){
                 if (valorSelecionado == ACAO_EDITAR){
                   _abrirForm(tarefaAtual: tarefa);
-                }else{
+                }else if (valorSelecionado == ACAO_EXCLUIR){
                   _excluir(tarefa);
+                }else{
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => DetalhesTarefaPage(tarefa: tarefa)));
                 }
             },
           );
@@ -215,6 +220,18 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
 
   List<PopupMenuEntry<String>> criarMenuPopUp(){
     return [
+      const PopupMenuItem<String>(
+        value: ACAO_VISUALIZAR,
+        child: Row(
+          children: [
+            Icon(Icons.info, color: Colors.blue),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text('Visualizar'),
+            )
+          ],
+        ),
+      ),
       const PopupMenuItem<String>(
         value: ACAO_EDITAR,
           child: Row(
