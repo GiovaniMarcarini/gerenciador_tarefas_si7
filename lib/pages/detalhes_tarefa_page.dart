@@ -36,14 +36,15 @@ class _DetalhesTarefaPageState extends State<DetalhesTarefaPage>{
           ),
           Row(
             children: [
-              Campo(descricao: 'Descrição: ',),
+              Campo(descricao: 'Descrição: '),
               Valor(valor: widget.tarefa.descricao,),
             ],
           ),
           Row(
             children: [
               Campo(descricao: 'Prazo: ',),
-              Valor(valor: widget.tarefa.prazoFormatado,),
+              Valor(valor: widget.tarefa.prazo == null ?
+              'Sem prazo' : widget.tarefa.prazoFormatado),
             ],
           ),
           Row(
